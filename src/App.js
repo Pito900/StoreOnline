@@ -9,8 +9,9 @@ class App extends React.Component {
   // }
 
   render() {
-    return (
-      <div className="App">
+    api.getCategories().then(categories => { console.log(categories) })
+   return (
+     <div className="App">
         <BrowserRouter>
           <Route exact path="/" component={Home}/>
         </BrowserRouter>
