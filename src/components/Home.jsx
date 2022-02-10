@@ -1,14 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { getCategories } from '../services/api';
+import { getCategories, getProductsFromCategoryAndQuery } from '../services/api';
 import './Home.css';
+import ProductCard from './ProductCard';
 
 class Home extends React.Component {
   constructor() {
     super();
-
     this.state = {
       listCategories: [],
+      inputValue: '',
+      products: [],
     };
   }
 
@@ -24,8 +26,19 @@ class Home extends React.Component {
     });
   }
 
+  inputChange = ({ target }) => {
+    const valueInput = target.value;
+    this.setState({ inputValue: valueInput });
+  }
+
+  handleButton = async (valueInput) => {
+    const result = await getProductsFromCategoryAndQuery('', valueInput);
+    const getProduct = result.results;
+    this.setState({ products: getProduct });
+  }
+
   render() {
-    const { listCategories } = this.state;
+    const { listCategories, inputValue, products } = this.state;
 
     return (
       <div className="main">
@@ -43,7 +56,20 @@ class Home extends React.Component {
             ))}
           </ul>
         </aside>
-        <input type="text" />
+        <input
+          type="text"
+          name="inputValue"
+          value={ inputValue }
+          onChange={ this.inputChange }
+          data-testid="query-input"
+        />
+        <button
+          type="button"
+          data-testid="query-button"
+          onClick={ () => { this.handleButton(inputValue); } }
+        >
+          buscar
+        </button>
         <Link to="/carrinho" data-testid="shopping-cart-button">
           <img className="icone" src="https://cdn-icons-png.flaticon.com/512/126/126510.png" alt="carrinho de compra" />
         </Link>
@@ -52,6 +78,20 @@ class Home extends React.Component {
         >
           Digite algum termo de pesquisa ou escolha uma categoria.
         </p>
+        {
+          products.map((product, index) => {
+            const { title, thumbnail, price } = product;
+            return (
+              <ProductCard
+                key={ index }
+                title={ title }
+                picture={ thumbnail }
+                price={ price }
+              />
+            );
+          })
+        }
+
       </div>
     );
   }
