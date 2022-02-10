@@ -8,6 +8,7 @@ class Home extends React.Component {
   constructor() {
     super();
     this.state = {
+      completeList: [],
       listCategories: [],
       inputValue: '',
       products: [],
@@ -20,6 +21,7 @@ class Home extends React.Component {
 
   getCategoriesList = async () => {
     const response = await getCategories();
+    this.setState({ completeList: response });
     response.forEach((e) => {
       this.setState((prevState) => ({
         listCategories: [...prevState.listCategories, e.name] }));
@@ -37,6 +39,20 @@ class Home extends React.Component {
     this.setState({ products: getProduct });
   }
 
+  filterByCategory = ({ target }) => {
+    const { name } = target;
+    const { completeList } = this.state;
+    const produto = completeList.find((e) => e.name === name);
+    this.chamaRequisição(produto);
+  }
+
+  chamaRequisição = async (categoryId) => {
+    const result = await getProductsFromCategoryAndQuery(categoryId.id);
+    console.log(result);
+    const product = result.results;
+    this.setState({ products: product });
+  }
+
   render() {
     const { listCategories, inputValue, products } = this.state;
 
@@ -50,7 +66,12 @@ class Home extends React.Component {
                 htmlFor={ categorie }
                 key={ index }
               >
-                <input id={ categorie } name="category" type="radio" />
+                <input
+                  id={ categorie }
+                  name={ categorie }
+                  type="radio"
+                  onChange={ this.filterByCategory }
+                />
                 {categorie}
               </label>
             ))}
