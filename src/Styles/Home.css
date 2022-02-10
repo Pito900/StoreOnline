@@ -1,0 +1,39 @@
+.icone {
+  width: 50px;
+}
+
+.main {
+  display: flex;
+}
+
+.main aside {
+  width: 30%;
+}
+
+.section-right {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  text-align: center;
+  width: 70%;
+}
+
+.main aside ul {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-category {
+  height: 20px;
+  width: 200px;
+}
+
+.btn-search {
+  height: 50px;
+}
+
+.card-list {
+  display: flex;
+  flex-flow: wrap;
+  flex-direction: row;
+}
