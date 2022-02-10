@@ -78,19 +78,21 @@ class Home extends React.Component {
         >
           Digite algum termo de pesquisa ou escolha uma categoria.
         </p>
-        {
-          products.map((product, index) => {
-            const { title, thumbnail, price } = product;
-            return (
-              <ProductCard
-                key={ index }
-                title={ title }
-                picture={ thumbnail }
-                price={ price }
-              />
-            );
-          })
-        }
+        <section>
+          {
+            products.map((product, index) => {
+              const { title, thumbnail, price } = product;
+              return (
+                <ProductCard
+                  key={ index }
+                  title={ title }
+                  picture={ thumbnail }
+                  price={ price }
+                />
+              );
+            })
+          }
+        </section>
 
       </div>
     );
