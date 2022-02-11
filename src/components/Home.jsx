@@ -40,9 +40,9 @@ class Home extends React.Component {
   }
 
   filterByCategory = ({ target }) => {
-    const { name } = target;
+    const { id } = target;
     const { completeList } = this.state;
-    const produto = completeList.find((e) => e.name === name);
+    const produto = completeList.find((e) => e.name === id);
     this.chamaRequisição(produto);
   }
 
@@ -72,7 +72,7 @@ class Home extends React.Component {
               >
                 <input
                   id={ categorie }
-                  name={ categorie }
+                  name="product"
                   type="radio"
                   onChange={ this.filterByCategory }
                 />
