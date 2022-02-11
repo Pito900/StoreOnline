@@ -56,9 +56,9 @@ class Home extends React.Component {
   }
 
   filterByCategory = ({ target }) => {
-    const { name } = target;
+    const { id } = target;
     const { completeList } = this.state;
-    const produto = completeList.find((e) => e.name === name);
+    const produto = completeList.find((e) => e.name === id);
     this.chamaRequisição(produto);
   }
 
@@ -68,21 +68,13 @@ class Home extends React.Component {
     this.setState({ products: product });
   }
 
+  savelistProduct = (listProduct) => {
+    const list = JSON.stringify(listProduct);
+    localStorage.setItem('Products', list);
+  }
+
   render() {
     const { listCategories, inputValue, products, cartProducts, nameProductCard } = this.state;
-    // const countVector = [];
-    // let counter = 0;
-    // const asd = products.map((product) => cartProducts.map((item)=> {if(item.id === product.id){
-    //   countVector.forEach((produto) => {if(produto[nomeProduto].includes(item.title)) {
-    //     produto[quantidadeProduto]= produto[quantidadeProduto] + 1;
-    //   }})
-    //          const productObjeto ={
-    //       nomeProduto: item.title,
-    //       quantidadeProduto: counter = counter + 1,
-    //   };
-
-    // }}))
-    // console.log(asd)
     return (
       <div className="main">
         <aside>
@@ -95,7 +87,7 @@ class Home extends React.Component {
               >
                 <input
                   id={ categorie }
-                  name={ categorie }
+                  name="product"
                   type="radio"
                   onChange={ this.filterByCategory }
                 />
@@ -140,13 +132,22 @@ class Home extends React.Component {
               products.map((product, index) => {
                 const { title, thumbnail, price, id } = product;
                 return (
-                  <ProductCard
+                  <div>
+                    <ProductCard
                     key={ index }
                     title={ title }
                     picture={ thumbnail }
                     price={ price }
                     addToCart={()=> this.addCart(id) }
-                  />
+                    />
+                   <Link
+                    data-testid="product-detail-link"
+                    to={ `/product/${id}` }
+                    onClick={ () => { this.savelistProduct(products); } }
+                  >  
+                    <button type="button">Ver detalhes</button>
+                  </Link>
+                  </div>
                 );
               })
             }

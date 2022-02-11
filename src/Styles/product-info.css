@@ -1,0 +1,10 @@
+.productInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.product img {
+  width: 300px;
+}
