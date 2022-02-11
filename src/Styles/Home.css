@@ -6,6 +6,11 @@
   display: flex;
 }
 
+a {
+  color: black;
+  text-decoration: none;
+}
+
 .main aside {
   width: 30%;
 }

@@ -52,6 +52,11 @@ class Home extends React.Component {
     this.setState({ products: product });
   }
 
+  savelistProduct = (listProduct) => {
+    const list = JSON.stringify(listProduct);
+    localStorage.setItem('Products', list)
+  }
+
   render() {
     const { listCategories, inputValue, products } = this.state;
 
@@ -107,14 +112,20 @@ class Home extends React.Component {
           <section className="card-list">
             {
               products.map((product, index) => {
-                const { title, thumbnail, price } = product;
+                const { title, thumbnail, price, id } = product;
                 return (
-                  <ProductCard
+                  <Link
                     key={ index }
-                    title={ title }
-                    picture={ thumbnail }
-                    price={ price }
-                  />
+                    data-testid="product-detail-link"
+                    to={`/product/${ id }`}
+                    onClick={() => { this.savelistProduct(products); }}
+                  >
+                    <ProductCard
+                      title={ title }
+                      picture={ thumbnail }
+                      price={ price }
+                    />
+                  </Link>
                 );
               })
             }
