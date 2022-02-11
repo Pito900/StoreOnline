@@ -12,6 +12,8 @@ class Home extends React.Component {
       listCategories: [],
       inputValue: '',
       products: [],
+      cartProducts: [],
+      nameProductCard: [],
     };
   }
 
@@ -39,6 +41,20 @@ class Home extends React.Component {
     this.setState({ products: getProduct });
   }
 
+  addCart = (id) =>{
+    const { products, cartProducts, nameProductCard } = this.state;
+    const produto = products.find((product) => product.id === id);
+    this.setState({
+      cartProducts: [...cartProducts, produto]
+    })
+    if( !nameProductCard.includes(produto.title)){
+      this.setState({
+        nameProductCard: [...nameProductCard, produto.title],
+      })
+    }
+
+  }
+
   filterByCategory = ({ target }) => {
     const { name } = target;
     const { completeList } = this.state;
@@ -53,8 +69,20 @@ class Home extends React.Component {
   }
 
   render() {
-    const { listCategories, inputValue, products } = this.state;
+    const { listCategories, inputValue, products, cartProducts, nameProductCard } = this.state;
+    // const countVector = [];
+    // let counter = 0;
+    // const asd = products.map((product) => cartProducts.map((item)=> {if(item.id === product.id){
+    //   countVector.forEach((produto) => {if(produto[nomeProduto].includes(item.title)) {
+    //     produto[quantidadeProduto]= produto[quantidadeProduto] + 1;
+    //   }})
+    //          const productObjeto ={
+    //       nomeProduto: item.title,
+    //       quantidadeProduto: counter = counter + 1,
+    //   };
 
+    // }}))
+    // console.log(asd)
     return (
       <div className="main">
         <aside>
@@ -95,7 +123,10 @@ class Home extends React.Component {
             >
               buscar
             </button>
-            <Link to="/carrinho" data-testid="shopping-cart-button">
+            <Link 
+            to={ { pathname: '/carrinho', state: { cartProducts, nameProductCard } } } 
+            data-testid="shopping-cart-button"
+            >
               <img className="icone" src="https://cdn-icons-png.flaticon.com/512/126/126510.png" alt="carrinho de compra" />
             </Link>
             <p
@@ -107,13 +138,14 @@ class Home extends React.Component {
           <section className="card-list">
             {
               products.map((product, index) => {
-                const { title, thumbnail, price } = product;
+                const { title, thumbnail, price, id } = product;
                 return (
                   <ProductCard
                     key={ index }
                     title={ title }
                     picture={ thumbnail }
                     price={ price }
+                    addToCart={()=> this.addCart(id) }
                   />
                 );
               })
