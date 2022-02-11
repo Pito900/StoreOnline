@@ -54,7 +54,7 @@ class Home extends React.Component {
 
   savelistProduct = (listProduct) => {
     const list = JSON.stringify(listProduct);
-    localStorage.setItem('Products', list)
+    localStorage.setItem('Products', list);
   }
 
   render() {
@@ -117,8 +117,8 @@ class Home extends React.Component {
                   <Link
                     key={ index }
                     data-testid="product-detail-link"
-                    to={`/product/${ id }`}
-                    onClick={() => { this.savelistProduct(products); }}
+                    to={ `/product/${id}` }
+                    onClick={ () => { this.savelistProduct(products); } }
                   >
                     <ProductCard
                       title={ title }
