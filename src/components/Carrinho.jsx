@@ -24,7 +24,6 @@ class Carrinho extends React.Component {
     }
   }
 
-
   render() {
     const { location: { state: { cartProducts } } } = this.props;
     const { nomes } = this.state;
