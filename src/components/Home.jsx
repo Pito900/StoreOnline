@@ -40,9 +40,9 @@ class Home extends React.Component {
   }
 
   filterByCategory = ({ target }) => {
-    const { name } = target;
+    const { id } = target;
     const { completeList } = this.state;
-    const produto = completeList.find((e) => e.name === name);
+    const produto = completeList.find((e) => e.name === id);
     this.chamaRequisição(produto);
   }
 
@@ -50,6 +50,11 @@ class Home extends React.Component {
     const result = await getProductsFromCategoryAndQuery(categoryId.id);
     const product = result.results;
     this.setState({ products: product });
+  }
+
+  savelistProduct = (listProduct) => {
+    const list = JSON.stringify(listProduct);
+    localStorage.setItem('Products', list);
   }
 
   render() {
@@ -67,7 +72,7 @@ class Home extends React.Component {
               >
                 <input
                   id={ categorie }
-                  name={ categorie }
+                  name="product"
                   type="radio"
                   onChange={ this.filterByCategory }
                 />
@@ -107,14 +112,20 @@ class Home extends React.Component {
           <section className="card-list">
             {
               products.map((product, index) => {
-                const { title, thumbnail, price } = product;
+                const { title, thumbnail, price, id } = product;
                 return (
-                  <ProductCard
+                  <Link
                     key={ index }
-                    title={ title }
-                    picture={ thumbnail }
-                    price={ price }
-                  />
+                    data-testid="product-detail-link"
+                    to={ `/product/${id}` }
+                    onClick={ () => { this.savelistProduct(products); } }
+                  >
+                    <ProductCard
+                      title={ title }
+                      picture={ thumbnail }
+                      price={ price }
+                    />
+                  </Link>
                 );
               })
             }

@@ -7,7 +7,12 @@ export default class ProductCard extends Component {
     const { title, picture, price } = this.props;
 
     return (
-      <div data-testid="product" className="card">
+      <div
+        // type="button"
+        // onClick={ click }
+        data-testid="product"
+        className="card"
+      >
         <h1>{ title }</h1>
         <img src={ picture } alt="Product" />
         <h2>{ price }</h2>
@@ -20,4 +25,5 @@ ProductCard.propTypes = {
   title: PropTypes.string.isRequired,
   picture: PropTypes.string.isRequired,
   price: PropTypes.number.isRequired,
+  // click: PropTypes.func.isRequired,
 };
