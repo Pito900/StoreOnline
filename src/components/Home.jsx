@@ -41,18 +41,16 @@ class Home extends React.Component {
     this.setState({ products: getProduct });
   }
 
-  addCart = (id) =>{
+  addCart = (id) => {
     const { products, cartProducts, nameProductCard } = this.state;
     const produto = products.find((product) => product.id === id);
     this.setState({
-      cartProducts: [...cartProducts, produto]
-    })
-    if( !nameProductCard.includes(produto.title)){
+      cartProducts: [...cartProducts, produto],
+    });
+    if (!nameProductCard.includes(produto.title)) {
       this.setState({
-        nameProductCard: [...nameProductCard, produto.title],
-      })
+        nameProductCard: [...nameProductCard, produto.title] });
     }
-
   }
 
   filterByCategory = ({ target }) => {
@@ -74,7 +72,17 @@ class Home extends React.Component {
   }
 
   render() {
-    const { listCategories, inputValue, products, cartProducts, nameProductCard } = this.state;
+    const { listCategories,
+      inputValue,
+      products,
+      cartProducts,
+      nameProductCard } = this.state;
+
+    // const list1 = JSON.stringify(nameProductCard);
+    // localStorage.setItem('Produtos', list1);
+    // const list2 = JSON.stringify(cartProducts);
+    // localStorage.setItem('Carrinho', list2);
+
     return (
       <div className="main">
         <aside>
@@ -115,9 +123,9 @@ class Home extends React.Component {
             >
               buscar
             </button>
-            <Link 
-            to={ { pathname: '/carrinho', state: { cartProducts, nameProductCard } } } 
-            data-testid="shopping-cart-button"
+            <Link
+              data-testid="shopping-cart-button"
+              to={ { pathname: '/carrinho', state: { cartProducts, nameProductCard } } }
             >
               <img className="icone" src="https://cdn-icons-png.flaticon.com/512/126/126510.png" alt="carrinho de compra" />
             </Link>
@@ -132,21 +140,20 @@ class Home extends React.Component {
               products.map((product, index) => {
                 const { title, thumbnail, price, id } = product;
                 return (
-                  <div>
+                  <div key={ index }>
                     <ProductCard
-                    key={ index }
-                    title={ title }
-                    picture={ thumbnail }
-                    price={ price }
-                    addToCart={()=> this.addCart(id) }
+                      title={ title }
+                      picture={ thumbnail }
+                      price={ price }
+                      addToCart={ () => this.addCart(id) }
                     />
-                   <Link
-                    data-testid="product-detail-link"
-                    to={ `/product/${id}` }
-                    onClick={ () => { this.savelistProduct(products); } }
-                  >  
-                    <button type="button">Ver detalhes</button>
-                  </Link>
+                    <Link
+                      data-testid="product-detail-link"
+                      to={ `/product/${id}` }
+                      onClick={ () => { this.savelistProduct(products); } }
+                    >
+                      <button type="button">Ver detalhes</button>
+                    </Link>
                   </div>
                 );
               })
