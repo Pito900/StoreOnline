@@ -13,6 +13,9 @@ export default class Product extends React.Component {
       nome: '',
       cartProducts: [],
       nameProductCard: [],
+      email: '',
+      avaliacao: '',
+      avaliacoes: [],
     };
   }
 
@@ -25,7 +28,17 @@ export default class Product extends React.Component {
       const listText = localStorage.getItem('Products');
       const listJson = JSON.parse(listText);
       const resultObj = listJson.find((e) => e.id === id);
+
+      const buscaAvaliacoes = localStorage.getItem('Avaliacoes');
+      const avaliacoes = JSON.parse(buscaAvaliacoes);
+
       this.setState({ objProduct: resultObj });
+      if (avaliacoes !== null) {
+        const filtraPorProduto = avaliacoes.filter(
+          (produto) => resultObj.title === produto.produto,
+        );
+        this.setState({ avaliacoes: filtraPorProduto });
+      }
     }
 
     nomeClick = () => {
@@ -41,8 +54,38 @@ export default class Product extends React.Component {
       localStorage.setItem('ProdutoDetalhes', list);
     }
 
+    valoresInput = (event) => {
+      const { target } = event;
+      const { name, value } = target;
+      this.setState({
+        [name]: value,
+      });
+    }
+
+    trabalhaComArray = () => {
+      const { email, avaliacao, nota, objProduct } = this.state;
+      const avalia = { email, nota, avaliacao, produto: objProduct.title };
+      this.setState((prevState) => ({ avaliacoes: [...prevState.avaliacoes, avalia] }),
+        () => { this.trabalhaComStorage(); });
+    }
+
+    trabalhaComStorage = () => {
+      const { avaliacoes } = this.state;
+      const notas = JSON.stringify(avaliacoes);
+      localStorage.setItem('Avaliacoes', notas);
+      this.setState({ email: '', avaliacao: '', nota: '' });
+    }
+
     render() {
-      const { objProduct, cartProducts, nameProductCard } = this.state;
+      const {
+        objProduct,
+        cartProducts,
+        nameProductCard,
+        email,
+        avaliacao,
+        avaliacoes,
+      } = this.state;
+
       const { title, thumbnail, price } = objProduct;
       return (
         <div className="productInfo">
@@ -63,6 +106,111 @@ export default class Product extends React.Component {
             </h2>
           </div>
           <Button addToCart={ this.nomeClick } dataId="product-detail-add-to-cart" />
+
+          <form>
+            <label htmlFor="email">
+              E-mail:
+              <input
+                type="text"
+                name="email"
+                value={ email }
+                data-testid="product-detail-email"
+                id="email"
+                onChange={ this.valoresInput }
+              />
+            </label>
+            <p>{ email }</p>
+
+            <div
+              onChange={ this.valoresInput }
+            >
+              <label htmlFor="input1">
+                1
+                <input
+                  name="nota"
+                  type="radio"
+                  id="input1"
+                  data-testid="1-rating"
+                  value="1"
+                />
+              </label>
+
+              <label htmlFor="input2">
+                2
+                <input
+                  name="nota"
+                  type="radio"
+                  id="input2"
+                  data-testid="2-rating"
+                  value="2"
+                />
+              </label>
+
+              <label htmlFor="input3">
+                3
+                <input
+                  name="nota"
+                  type="radio"
+                  id="input3"
+                  data-testid="3-rating"
+                  value="3"
+                />
+              </label>
+
+              <label htmlFor="input4">
+                4
+                <input
+                  name="nota"
+                  type="radio"
+                  id="input4"
+                  data-testid="4-rating"
+                  value="4"
+                />
+              </label>
+
+              <label htmlFor="input5">
+                5
+                <input
+                  name="nota"
+                  type="radio"
+                  id="input5"
+                  data-testid="5-rating"
+                  value="5"
+                />
+              </label>
+            </div>
+
+            <label htmlFor="avaliacao">
+              Deixe sua avaliação:
+              <textarea
+                name="avaliacao"
+                value={ avaliacao }
+                data-testid="product-detail-evaluation"
+                id="avaliacao"
+                onChange={ this.valoresInput }
+              />
+            </label>
+
+            <button
+              type="button"
+              data-testid="submit-review-btn"
+              onClick={ this.trabalhaComArray }
+            >
+              Enviar
+
+            </button>
+          </form>
+          <h3>Avaliações de usuários:</h3>
+          {avaliacoes.map((elemento, index) => (
+            <div key={ index }>
+              <h4>{elemento.email}</h4>
+              <p>
+                Nota:
+                {elemento.nota}
+              </p>
+              <article>{elemento.avaliacao}</article>
+            </div>
+          ))}
         </div>
       );
     }
