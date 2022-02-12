@@ -31,13 +31,12 @@ class Carrinho extends React.Component {
         nomes: [...PreveState.nomes, { nome: nameProductCard[i], quantity: counter }],
       }));
     }
-    this.pegaValoresLocalStorage(produtoDetalhado);
-  }
 
-  pegaValoresLocalStorage = (produtoDetalhado) => {
-    this.setState((PreveState) => ({
-      nomes: [...PreveState.nomes, produtoDetalhado[0]],
-    }));
+    if (produtoDetalhado !== null) {
+      this.setState((PreveState) => ({
+        nomes: [...PreveState.nomes, produtoDetalhado[0]],
+      }));
+    }
   }
 
   render() {
