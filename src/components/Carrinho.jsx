@@ -45,9 +45,8 @@ class Carrinho extends React.Component {
     const ObjChange = nomes.find((produto) => textName === produto.nome);
     const counter = ObjChange.quantity - 1;
     if (counter >= 0) {
-      this.setState((PreveState) => ({
-        nomes: [...PreveState.nomes, { nome: textName, quantity: counter }],
-      }));
+      ObjChange.quantity = counter;
+      this.setState(() => ({}));
     }
   }
 
@@ -57,9 +56,7 @@ class Carrinho extends React.Component {
     const ObjChange = nomes.find((produto) => textName === produto.nome);
     const counter = ObjChange.quantity + 1;
     ObjChange.quantity = counter;
-    this.setState((PreveState) => ({
-      nomes: [...PreveState.nomes, { nome: textName, quantity: counter }],
-    }));
+    this.setState(() => ({}));
   }
 
 dellProduct = ({ target }) => {
