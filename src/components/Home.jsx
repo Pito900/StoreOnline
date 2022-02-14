@@ -14,6 +14,7 @@ class Home extends React.Component {
       products: [],
       cartProducts: [],
       nameProductCard: [],
+      productCategory: '',
     };
   }
 
@@ -63,12 +64,13 @@ class Home extends React.Component {
   chamaRequisição = async (categoryId) => {
     const result = await getProductsFromCategoryAndQuery(categoryId.id);
     const product = result.results;
-    this.setState({ products: product });
+    this.setState({ products: product, productCategory: categoryId.id });
   }
 
   savelistProduct = (listProduct) => {
+    console.log(listProduct);
     const list = JSON.stringify(listProduct);
-    localStorage.setItem('Products', list);
+    localStorage.setItem('idCategory', list);
   }
 
   render() {
@@ -76,7 +78,8 @@ class Home extends React.Component {
       inputValue,
       products,
       cartProducts,
-      nameProductCard } = this.state;
+      nameProductCard,
+      productCategory } = this.state;
 
     // const list1 = JSON.stringify(nameProductCard);
     // localStorage.setItem('Produtos', list1);
@@ -138,19 +141,20 @@ class Home extends React.Component {
           <section className="card-list">
             {
               products.map((product, index) => {
-                const { title, thumbnail, price, id } = product;
+                const { title, thumbnail, price, id, shipping } = product;
                 return (
                   <div key={ index }>
                     <ProductCard
                       title={ title }
                       picture={ thumbnail }
                       price={ price }
+                      freteGratis={ shipping.free_shipping }
                       addToCart={ () => this.addCart(id) }
                     />
                     <Link
                       data-testid="product-detail-link"
                       to={ `/product/${id}` }
-                      onClick={ () => { this.savelistProduct(products); } }
+                      onClick={ () => { this.savelistProduct(productCategory); } }
                     >
                       <button type="button">Ver detalhes</button>
                     </Link>
