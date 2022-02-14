@@ -5,7 +5,7 @@ import '../Styles/card-style.css';
 
 export default class ProductCard extends Component {
   render() {
-    const { title, picture, price, addToCart } = this.props;
+    const { title, picture, price, addToCart, freteGratis } = this.props;
 
     return (
 
@@ -13,6 +13,8 @@ export default class ProductCard extends Component {
         <h1>{ title }</h1>
         <img src={ picture } alt="Product" />
         <h2>{ price }</h2>
+        {freteGratis
+        && <p className="free" data-testid="free-shipping">Frete Grátis Disponível</p>}
         <Button addToCart={ addToCart } dataId="product-add-to-cart" />
       </div>
     );
@@ -24,4 +26,5 @@ ProductCard.propTypes = {
   picture: PropTypes.string.isRequired,
   price: PropTypes.number.isRequired,
   addToCart: PropTypes.func.isRequired,
+  freteGratis: PropTypes.bool.isRequired,
 };

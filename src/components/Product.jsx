@@ -16,6 +16,7 @@ export default class Product extends React.Component {
       email: '',
       avaliacao: '',
       avaliacoes: [],
+      freteGratis: false,
     };
   }
 
@@ -29,13 +30,17 @@ export default class Product extends React.Component {
       const listJson = JSON.parse(listText);
       const resultObj = listJson.find((e) => e.id === id);
 
-      const buscaAvaliacoes = localStorage.getItem('Avaliacoes');
+      const buscaAvaliacoes = localStorage.getItem(`Avaliações${resultObj.id}`);
       const avaliacoes = JSON.parse(buscaAvaliacoes);
 
-      this.setState({ objProduct: resultObj });
+      this.setState({
+        objProduct: resultObj,
+        freteGratis: resultObj.shipping.free_shipping,
+      });
+
       if (avaliacoes !== null) {
         const filtraPorProduto = avaliacoes.filter(
-          (produto) => resultObj.title === produto.produto,
+          (produto) => resultObj.id === produto.produto,
         );
         this.setState({ avaliacoes: filtraPorProduto });
       }
@@ -64,15 +69,18 @@ export default class Product extends React.Component {
 
     trabalhaComArray = () => {
       const { email, avaliacao, nota, objProduct } = this.state;
-      const avalia = { email, nota, avaliacao, produto: objProduct.title };
+      const avalia = { email, nota, avaliacao, produto: objProduct.id };
       this.setState((prevState) => ({ avaliacoes: [...prevState.avaliacoes, avalia] }),
         () => { this.trabalhaComStorage(); });
     }
 
     trabalhaComStorage = () => {
       const { avaliacoes } = this.state;
+      // arrayCompleto.push(avalia);
+      // console.log(avaliacoes);
       const notas = JSON.stringify(avaliacoes);
-      localStorage.setItem('Avaliacoes', notas);
+      // const nomeChave = ``
+      localStorage.setItem(`Avaliações${avaliacoes[0].produto}`, notas);
       this.setState({ email: '', avaliacao: '', nota: '' });
     }
 
@@ -84,7 +92,10 @@ export default class Product extends React.Component {
         email,
         avaliacao,
         avaliacoes,
+        freteGratis,
       } = this.state;
+
+      console.log(freteGratis);
 
       const { title, thumbnail, price } = objProduct;
       return (
@@ -104,6 +115,8 @@ export default class Product extends React.Component {
               R$
               { price }
             </h2>
+            {freteGratis
+          && <p className="free" data-testid="free-shipping">Frete Grátis Disponível</p>}
           </div>
           <Button addToCart={ this.nomeClick } dataId="product-detail-add-to-cart" />
 

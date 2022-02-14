@@ -138,13 +138,14 @@ class Home extends React.Component {
           <section className="card-list">
             {
               products.map((product, index) => {
-                const { title, thumbnail, price, id } = product;
+                const { title, thumbnail, price, id, shipping } = product;
                 return (
                   <div key={ index }>
                     <ProductCard
                       title={ title }
                       picture={ thumbnail }
                       price={ price }
+                      freteGratis={ shipping.free_shipping }
                       addToCart={ () => this.addCart(id) }
                     />
                     <Link
