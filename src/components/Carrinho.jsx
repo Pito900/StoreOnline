@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 class Carrinho extends React.Component {
@@ -37,6 +38,11 @@ class Carrinho extends React.Component {
         nomes: [...PreveState.nomes, produtoDetalhado[0]],
       }));
     }
+  }
+
+  donePurchases = (ListaDoCarrinho) => {
+    const listCoFromCarrinho = JSON.stringify(ListaDoCarrinho);
+    localStorage.setItem('ProductsCoFromCarrinho', listCoFromCarrinho);
   }
 
   addLess = ({ target }) => {
@@ -104,7 +110,16 @@ render() {
               X
             </button>
           </div>
-          <button type="button">Finalizar a compra</button>
+          <Link to="/Checkout">
+            <button
+              type="button"
+              data-testid="checkout-products"
+              onClick={ () => this.donePurchases(nomes) }
+            >
+              Finalizar a compra
+
+            </button>
+          </Link>
         </>
       )))
         : (
