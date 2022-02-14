@@ -16,6 +16,7 @@ export default class Product extends React.Component {
       email: '',
       avaliacao: '',
       avaliacoes: [],
+      nota: '1',
       freteGratis: false,
     };
   }
@@ -39,10 +40,7 @@ export default class Product extends React.Component {
       });
 
       if (avaliacoes !== null) {
-        const filtraPorProduto = avaliacoes.filter(
-          (produto) => resultObj.id === produto.produto,
-        );
-        this.setState({ avaliacoes: filtraPorProduto });
+        this.setState({ avaliacoes });
       }
     }
 
@@ -67,22 +65,32 @@ export default class Product extends React.Component {
       });
     }
 
-    trabalhaComArray = () => {
-      const { email, avaliacao, nota, objProduct } = this.state;
+    trabalhaComArray = (e) => {
+      e.preventDefault();
+      const { email, avaliacao, nota, objProduct, avaliacoes } = this.state;
       const avalia = { email, nota, avaliacao, produto: objProduct.id };
-      this.setState((prevState) => ({ avaliacoes: [...prevState.avaliacoes, avalia] }),
-        () => { this.trabalhaComStorage(); });
+      const newAvaliacao = [...avaliacoes, avalia];
+      const notas = JSON.stringify(newAvaliacao);
+      localStorage.setItem(`Avaliações${objProduct.id}`, notas);
+
+      const buscaAvaliacoes = localStorage.getItem(`Avaliações${objProduct.id}`);
+      const newAvalia = JSON.parse(buscaAvaliacoes);
+
+      this.setState({ email: '', avaliacao: '', nota: '1', avaliacoes: newAvalia });
+
+      // this.setState((prevState) => ({ avaliacoes: [...prevState.avaliacoes, avalia] }),
+      //   () => { this.trabalhaComStorage(); });
     }
 
-    trabalhaComStorage = () => {
-      const { avaliacoes } = this.state;
-      // arrayCompleto.push(avalia);
-      // console.log(avaliacoes);
-      const notas = JSON.stringify(avaliacoes);
-      // const nomeChave = ``
-      localStorage.setItem(`Avaliações${avaliacoes[0].produto}`, notas);
-      this.setState({ email: '', avaliacao: '', nota: '' });
-    }
+    // trabalhaComStorage = () => {
+    //   const { avaliacoes } = this.state;
+    //   // arrayCompleto.push(avalia);
+    //   // console.log(avaliacoes);
+    //   const notas = JSON.stringify(avaliacoes);
+    //   // const nomeChave = ``
+    //   localStorage.setItem(`Avaliações${avaliacoes[0].produto}`, notas);
+    //   this.setState({ email: '', avaliacao: '', nota: '' });
+    // }
 
     render() {
       const {
@@ -93,6 +101,7 @@ export default class Product extends React.Component {
         avaliacao,
         avaliacoes,
         freteGratis,
+        nota,
       } = this.state;
 
       console.log(freteGratis);
@@ -122,9 +131,9 @@ export default class Product extends React.Component {
 
           <form>
             <label htmlFor="email">
-              E-mail:
+              Email:
               <input
-                type="text"
+                type="email"
                 name="email"
                 value={ email }
                 data-testid="product-detail-email"
@@ -132,7 +141,7 @@ export default class Product extends React.Component {
                 onChange={ this.valoresInput }
               />
             </label>
-            <p>{ email }</p>
+            {/* <p>{ email }</p> */}
 
             <div
               onChange={ this.valoresInput }
@@ -144,7 +153,8 @@ export default class Product extends React.Component {
                   type="radio"
                   id="input1"
                   data-testid="1-rating"
-                  value="1"
+                  value='1'
+                  checked={nota === '1'}
                 />
               </label>
 
@@ -156,6 +166,7 @@ export default class Product extends React.Component {
                   id="input2"
                   data-testid="2-rating"
                   value="2"
+  
                 />
               </label>
 
@@ -205,9 +216,9 @@ export default class Product extends React.Component {
             </label>
 
             <button
-              type="button"
+              type="submit"
               data-testid="submit-review-btn"
-              onClick={ this.trabalhaComArray }
+              onClick={ (e) => this.trabalhaComArray(e) }
             >
               Enviar
 
@@ -216,12 +227,11 @@ export default class Product extends React.Component {
           <h3>Avaliações de usuários:</h3>
           {avaliacoes.map((elemento, index) => (
             <div key={ index }>
-              <h4>{elemento.email}</h4>
+              <p>{elemento.email}</p>
               <p>
-                Nota:
                 {elemento.nota}
               </p>
-              <article>{elemento.avaliacao}</article>
+              <p>{elemento.avaliacao}</p>
             </div>
           ))}
         </div>
