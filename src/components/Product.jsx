@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import '../Styles/product-info.css';
 import PropTypes from 'prop-types';
+import { getProductsFromCategoryAndQuery } from '../services/api';
+import '../Styles/product-info.css';
 import Button from './Button';
 
 export default class Product extends React.Component {
@@ -25,11 +26,16 @@ export default class Product extends React.Component {
     this.getObjLocalStorage();
   }
 
-    getObjLocalStorage = () => {
+    getObjLocalStorage = async () => {
       const { match: { params: { id } } } = this.props;
-      const listText = localStorage.getItem('Products');
-      const listJson = JSON.parse(listText);
-      const resultObj = listJson.find((e) => e.id === id);
+
+      const idDaCategoria = localStorage.getItem('idCategory');
+      const categoria = JSON.parse(idDaCategoria);
+
+      const arrayProdutos = await getProductsFromCategoryAndQuery(categoria);
+      const arrayProdutosCategoria = arrayProdutos.results;
+
+      const resultObj = arrayProdutosCategoria.find((e) => e.id === id);
 
       const buscaAvaliacoes = localStorage.getItem(`Avaliações${resultObj.id}`);
       const avaliacoes = JSON.parse(buscaAvaliacoes);
@@ -104,8 +110,6 @@ export default class Product extends React.Component {
         nota,
       } = this.state;
 
-      console.log(freteGratis);
-
       const { title, thumbnail, price } = objProduct;
       return (
         <div className="productInfo">
@@ -153,8 +157,8 @@ export default class Product extends React.Component {
                   type="radio"
                   id="input1"
                   data-testid="1-rating"
-                  value='1'
-                  checked={nota === '1'}
+                  value="1"
+                  checked={ nota === '1' }
                 />
               </label>
 
@@ -166,7 +170,7 @@ export default class Product extends React.Component {
                   id="input2"
                   data-testid="2-rating"
                   value="2"
-  
+
                 />
               </label>
 
