@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 class Carrinho extends React.Component {
@@ -39,46 +40,46 @@ class Carrinho extends React.Component {
     }
   }
 
+  donePurchases = (ListaDoCarrinho) => {
+    const listCoFromCarrinho = JSON.stringify(ListaDoCarrinho);
+    localStorage.setItem('ProductsCoFromCarrinho', listCoFromCarrinho);
+  }
+
   addLess = ({ target }) => {
-    const textName = target.previousElementSibling.previousElementSibling.textContent
+    const textName = target.previousElementSibling.previousElementSibling.textContent;
     const { nomes } = this.state;
     const ObjChange = nomes.find((produto) => textName === produto.nome);
-    let counter = ObjChange.quantity -1
-    if(counter>=0) {
-      ObjChange.quantity = counter 
-      this.setState({
-        nome: ObjChange,
-      })    
-    }  
+    const counter = ObjChange.quantity - 1;
+    if (counter >= 0) {
+      ObjChange.quantity = counter;
+      this.setState(() => ({}));
+    }
   }
 
   addMore = ({ target }) => {
-    const textName = target.parentNode.firstChild.textContent
+    const textName = target.parentNode.firstChild.textContent;
     const { nomes } = this.state;
     const ObjChange = nomes.find((produto) => textName === produto.nome);
-    let counter = ObjChange.quantity +1
-    ObjChange.quantity = counter 
-    this.setState({
-      nome: ObjChange,
-    })    
+    const counter = ObjChange.quantity + 1;
+    ObjChange.quantity = counter;
+    this.setState(() => ({}));
   }
 
 dellProduct = ({ target }) => {
-  const textName = target.parentNode.childNodes[0].textContent
+  const textName = target.parentNode.childNodes[0].textContent;
   const { nomes } = this.state;
   const newObjtName = nomes.filter((produto) => textName !== produto.nome);
   this.setState({
-    nomes: newObjtName
-  })  
-  
-  }
+    nomes: newObjtName,
+  });
+}
 
-  render() {
-    const { nomes } = this.state;
-    return (
-      <div>
-        {nomes.length > 0 ? (nomes.map((produto, index) => (
-          <>
+render() {
+  const { nomes } = this.state;
+  return (
+    <div>
+      {nomes.length > 0 ? (nomes.map((produto, index) => (
+        <>
           <div key={ index }>
             <p data-testid="shopping-cart-product-name">
               {produto.nome}
@@ -88,22 +89,48 @@ dellProduct = ({ target }) => {
               {' '}
               {produto.quantity}
             </p>
-            <button data-testid="product-decrease-quantity" onClick={ this.addLess }>-</button>
-             <button data-testid="product-increase-quantity"onClick={ this.addMore }>+</button>
-             <button onClick={ this.dellProduct }>X</button>
-          </div>
-          <button type="button">Finalizar a compra</button>
-          </>
-          )))
-          : (
-            <p
-              data-testid="shopping-cart-empty-message"
+            <button
+              type="button"
+              data-testid="product-decrease-quantity"
+              onClick={ this.addLess }
             >
-              Seu carrinho está vazio
-            </p>)}
-      </div>
-    );
-  }
+              -
+            </button>
+            <button
+              type="button"
+              data-testid="product-increase-quantity"
+              onClick={ this.addMore }
+            >
+              +
+            </button>
+            <button
+              type="button"
+              onClick={ this.dellProduct }
+            >
+              X
+            </button>
+          </div>
+          <Link to="/Checkout">
+            <button
+              type="button"
+              data-testid="checkout-products"
+              onClick={ () => this.donePurchases(nomes) }
+            >
+              Finalizar a compra
+
+            </button>
+          </Link>
+        </>
+      )))
+        : (
+          <p
+            data-testid="shopping-cart-empty-message"
+          >
+            Seu carrinho está vazio
+          </p>)}
+    </div>
+  );
+}
 }
 
 Carrinho.propTypes = {
