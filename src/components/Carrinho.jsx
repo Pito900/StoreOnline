@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 class Carrinho extends React.Component {
@@ -6,17 +7,15 @@ class Carrinho extends React.Component {
     super();
     this.state = {
       nomes: [],
-      nome: [],
+      disableButton: false,
     };
   }
 
   componentDidMount() {
     const { location: { state: { cartProducts, nameProductCard } } } = this.props;
-
     const localProdutoDetalhado = localStorage.getItem('ProdutoDetalhes');
     // const localProdutos = localStorage.getItem('Produtos');
     // const localCarrinho = localStorage.getItem('Carrinho');
-
     const produtoDetalhado = JSON.parse(localProdutoDetalhado);
     // const produtos = JSON.parse(localProdutos);
     // const carrinho = JSON.parse(localCarrinho);
@@ -29,7 +28,9 @@ class Carrinho extends React.Component {
         }
       }
       this.setState((PreveState) => ({
-        nomes: [...PreveState.nomes, { nome: nameProductCard[i], quantity: counter }],
+        nomes: [...PreveState.nomes, { nome: nameProductCard[i],
+          quantity: counter,
+          estoque: cartProducts[i].available_quantity }],
       }));
     }
 
@@ -40,6 +41,11 @@ class Carrinho extends React.Component {
     }
   }
 
+  donePurchases = (ListaDoCarrinho) => {
+    const listCoFromCarrinho = JSON.stringify(ListaDoCarrinho);
+    localStorage.setItem('ProductsCoFromCarrinho', listCoFromCarrinho);
+  }
+
   addLess = ({ target }) => {
     const textName = target.previousElementSibling.previousElementSibling.textContent;
     const { nomes } = this.state;
@@ -47,9 +53,7 @@ class Carrinho extends React.Component {
     const counter = ObjChange.quantity - 1;
     if (counter >= 0) {
       ObjChange.quantity = counter;
-      this.setState({
-        nome: ObjChange,
-      });
+      this.setState(() => ({}));
     }
   }
 
@@ -57,11 +61,13 @@ class Carrinho extends React.Component {
     const textName = target.parentNode.firstChild.textContent;
     const { nomes } = this.state;
     const ObjChange = nomes.find((produto) => textName === produto.nome);
-    const counter = ObjChange.quantity + 1;
-    ObjChange.quantity = counter;
-    this.setState({
-      nome: ObjChange,
-    });
+    if (ObjChange.quantity < ObjChange.estoque) {
+      const counter = ObjChange.quantity + 1;
+      ObjChange.quantity = counter;
+      this.setState(() => ({}));
+    } else {
+      this.setState({ disableButton: true });
+    }
   }
 
 dellProduct = ({ target }) => {
@@ -74,7 +80,7 @@ dellProduct = ({ target }) => {
 }
 
 render() {
-  const { nomes } = this.state;
+  const { nomes, disableButton } = this.state;
   return (
     <div>
       {nomes.length > 0 ? (nomes.map((produto, index) => (
@@ -89,30 +95,37 @@ render() {
               {produto.quantity}
             </p>
             <button
+              type="button"
               data-testid="product-decrease-quantity"
               onClick={ this.addLess }
-              type="button"
             >
               -
-
             </button>
             <button
               type="button"
               data-testid="product-increase-quantity"
+              disabled={ disableButton }
               onClick={ this.addMore }
             >
               +
-
             </button>
             <button
               type="button"
               onClick={ this.dellProduct }
             >
               X
-
             </button>
           </div>
-          <button type="button">Finalizar a compra</button>
+          <Link to="/Checkout">
+            <button
+              type="button"
+              data-testid="checkout-products"
+              onClick={ () => this.donePurchases(nomes) }
+            >
+              Finalizar a compra
+
+            </button>
+          </Link>
         </>
       )))
         : (
