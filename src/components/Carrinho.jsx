@@ -7,16 +7,15 @@ class Carrinho extends React.Component {
     super();
     this.state = {
       nomes: [],
+      disableButton: false,
     };
   }
 
   componentDidMount() {
     const { location: { state: { cartProducts, nameProductCard } } } = this.props;
-
     const localProdutoDetalhado = localStorage.getItem('ProdutoDetalhes');
     // const localProdutos = localStorage.getItem('Produtos');
     // const localCarrinho = localStorage.getItem('Carrinho');
-
     const produtoDetalhado = JSON.parse(localProdutoDetalhado);
     // const produtos = JSON.parse(localProdutos);
     // const carrinho = JSON.parse(localCarrinho);
@@ -29,7 +28,9 @@ class Carrinho extends React.Component {
         }
       }
       this.setState((PreveState) => ({
-        nomes: [...PreveState.nomes, { nome: nameProductCard[i], quantity: counter }],
+        nomes: [...PreveState.nomes, { nome: nameProductCard[i],
+          quantity: counter,
+          estoque: cartProducts[i].available_quantity }],
       }));
     }
 
@@ -60,9 +61,13 @@ class Carrinho extends React.Component {
     const textName = target.parentNode.firstChild.textContent;
     const { nomes } = this.state;
     const ObjChange = nomes.find((produto) => textName === produto.nome);
-    const counter = ObjChange.quantity + 1;
-    ObjChange.quantity = counter;
-    this.setState(() => ({}));
+    if (ObjChange.quantity < ObjChange.estoque) {
+      const counter = ObjChange.quantity + 1;
+      ObjChange.quantity = counter;
+      this.setState(() => ({}));
+    } else {
+      this.setState({ disableButton: true });
+    }
   }
 
 dellProduct = ({ target }) => {
@@ -75,7 +80,7 @@ dellProduct = ({ target }) => {
 }
 
 render() {
-  const { nomes } = this.state;
+  const { nomes, disableButton } = this.state;
   return (
     <div>
       {nomes.length > 0 ? (nomes.map((produto, index) => (
@@ -99,6 +104,7 @@ render() {
             <button
               type="button"
               data-testid="product-increase-quantity"
+              disabled={ disableButton }
               onClick={ this.addMore }
             >
               +
