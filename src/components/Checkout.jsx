@@ -11,7 +11,6 @@ class Checkout extends React.Component {
   componentDidMount() {
     const produtosDoCarrinho = localStorage.getItem('ProductsCoFromCarrinho');
     const produtosFromCarrinho = JSON.parse(produtosDoCarrinho);
-    console.log(produtosFromCarrinho);
     this.setState({
       listFromCarrinho: produtosFromCarrinho,
     });

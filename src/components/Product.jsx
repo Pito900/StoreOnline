@@ -3,17 +3,14 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { getProductsFromCategoryAndQuery } from '../services/api';
 import '../Styles/product-info.css';
-import Button from './Button';
 
 export default class Product extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       objProduct: {},
-      cont: 0,
-      nome: '',
-      cartProducts: [],
-      nameProductCard: [],
+      cont: [],
+      name: '',
       email: '',
       avaliacao: '',
       avaliacoes: [],
@@ -51,16 +48,15 @@ export default class Product extends React.Component {
     }
 
     nomeClick = () => {
+      const quantt = localStorage.getItem('quant');
+      const quantLstorage = JSON.parse(quantt);
       const { objProduct } = this.state;
-      this.setState((prevState) => ({ cont: prevState.cont + 1, nome: objProduct.title }),
-        () => { this.addNoLocalStorage(); });
-    }
-
-    addNoLocalStorage = () => {
-      const { nome, cont } = this.state;
-      const produto = [{ nome, quantity: cont }];
-      const list = JSON.stringify(produto);
-      localStorage.setItem('ProdutoDetalhes', list);
+      this.setState((prevState) => ({ cont: [...prevState.cont, objProduct],
+        name: objProduct.title,
+      }));
+      const add1 = quantLstorage + 1;
+      const listCarrinho = JSON.stringify(add1);
+      localStorage.setItem('quant', listCarrinho);
     }
 
     valoresInput = (event) => {
@@ -83,40 +79,29 @@ export default class Product extends React.Component {
       const newAvalia = JSON.parse(buscaAvaliacoes);
 
       this.setState({ email: '', avaliacao: '', nota: '1', avaliacoes: newAvalia });
-
-      // this.setState((prevState) => ({ avaliacoes: [...prevState.avaliacoes, avalia] }),
-      //   () => { this.trabalhaComStorage(); });
     }
-
-    // trabalhaComStorage = () => {
-    //   const { avaliacoes } = this.state;
-    //   // arrayCompleto.push(avalia);
-    //   // console.log(avaliacoes);
-    //   const notas = JSON.stringify(avaliacoes);
-    //   // const nomeChave = ``
-    //   localStorage.setItem(`Avaliações${avaliacoes[0].produto}`, notas);
-    //   this.setState({ email: '', avaliacao: '', nota: '' });
-    // }
 
     render() {
       const {
         objProduct,
-        cartProducts,
-        nameProductCard,
+        name,
         email,
         avaliacao,
         avaliacoes,
         freteGratis,
         nota,
+        cont,
       } = this.state;
-
+      const quantt = localStorage.getItem('quant');
+      const quantLstorage = JSON.parse(quantt);
       const { title, thumbnail, price } = objProduct;
       return (
         <div className="productInfo">
-
+          <p data-testid="shopping-cart-size">{quantLstorage}</p>
           <Link
             data-testid="shopping-cart-button"
-            to={ { pathname: '/carrinho', state: { cartProducts, nameProductCard } } }
+            to={ { pathname: '/carrinho',
+              state: { cont, name } } }
           >
             <img className="icone" src="https://cdn-icons-png.flaticon.com/512/126/126510.png" alt="carrinho de compra" />
           </Link>
@@ -131,7 +116,14 @@ export default class Product extends React.Component {
             {freteGratis
           && <p className="free" data-testid="free-shipping">Frete Grátis Disponível</p>}
           </div>
-          <Button addToCart={ this.nomeClick } dataId="product-detail-add-to-cart" />
+
+          <button
+            type="button"
+            data-testid="product-detail-add-to-cart"
+            onClick={ this.nomeClick }
+          >
+            addToCart
+          </button>
 
           <form>
             <label htmlFor="email">
@@ -145,7 +137,6 @@ export default class Product extends React.Component {
                 onChange={ this.valoresInput }
               />
             </label>
-            {/* <p>{ email }</p> */}
 
             <div
               onChange={ this.valoresInput }

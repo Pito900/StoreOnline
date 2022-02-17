@@ -12,31 +12,40 @@ class Carrinho extends React.Component {
   }
 
   componentDidMount() {
-    const { location: { state: { cartProducts, nameProductCard } } } = this.props;
-    const localProdutoDetalhado = localStorage.getItem('ProdutoDetalhes');
-    // const localProdutos = localStorage.getItem('Produtos');
-    // const localCarrinho = localStorage.getItem('Carrinho');
-    const produtoDetalhado = JSON.parse(localProdutoDetalhado);
-    // const produtos = JSON.parse(localProdutos);
-    // const carrinho = JSON.parse(localCarrinho);
+    const { location: { state: {
+      cartProducts,
+      nameProductCard,
+      cont,
+      name } } } = this.props;
+    let cartProducts2 = [];
+    let nameProductCard2 = [];
+    if (cont === undefined && name === undefined) {
+      cartProducts2 = cartProducts;
+      nameProductCard2 = nameProductCard;
+    } else if (cartProducts === undefined && nameProductCard === undefined) {
+      cartProducts2 = cont;
+      nameProductCard2 = [name];
+    } else if (cartProducts === undefined
+      && nameProductCard === undefined
+      && cont === undefined
+      && name === undefined) {
+      this.setState({ nomes: [] });
+    } else {
+      cartProducts2 = [...cont, ...cartProducts];
+      nameProductCard2 = [...nameProductCard, cont[0].title];
+    }
 
-    for (let i = 0; i < nameProductCard.length; i += 1) {
+    for (let i = 0; i < nameProductCard2.length; i += 1) {
       let counter = 0;
-      for (let k = 0; k < cartProducts.length; k += 1) {
-        if (nameProductCard[i] === cartProducts[k].title) {
+      for (let k = 0; k < cartProducts2.length; k += 1) {
+        if (nameProductCard2[i] === cartProducts2[k].title) {
           counter += 1;
         }
       }
       this.setState((PreveState) => ({
-        nomes: [...PreveState.nomes, { nome: nameProductCard[i],
+        nomes: [...PreveState.nomes, { nome: nameProductCard2[i],
           quantity: counter,
-          estoque: cartProducts[i].available_quantity }],
-      }));
-    }
-
-    if (produtoDetalhado !== null) {
-      this.setState((PreveState) => ({
-        nomes: [...PreveState.nomes, produtoDetalhado[0]],
+          estoque: cartProducts2[i].available_quantity }],
       }));
     }
   }
@@ -81,6 +90,12 @@ dellProduct = ({ target }) => {
 
 render() {
   const { nomes, disableButton } = this.state;
+  const listCarrinho = JSON.stringify(nomes);
+  localStorage.setItem('Carrinho', listCarrinho);
+  localStorage.setItem('quant', JSON.stringify(nomes.reduce(
+    (soma, atual) => soma + atual.quantity, 0,
+  )));
+
   return (
     <div>
       {nomes.length > 0 ? (nomes.map((produto, index) => (

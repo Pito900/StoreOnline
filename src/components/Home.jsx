@@ -43,6 +43,8 @@ class Home extends React.Component {
   }
 
   addCart = (id) => {
+    const quantt = localStorage.getItem('quant');
+    const quantLstorage = JSON.parse(quantt);
     const { products, cartProducts, nameProductCard } = this.state;
     const produto = products.find((product) => product.id === id);
     this.setState({
@@ -52,6 +54,9 @@ class Home extends React.Component {
       this.setState({
         nameProductCard: [...nameProductCard, produto.title] });
     }
+    const add1 = quantLstorage + 1;
+    const listCarrinho = JSON.stringify(add1);
+    localStorage.setItem('quant', listCarrinho);
   }
 
   filterByCategory = ({ target }) => {
@@ -68,7 +73,6 @@ class Home extends React.Component {
   }
 
   savelistProduct = (listProduct) => {
-    console.log(listProduct);
     const list = JSON.stringify(listProduct);
     localStorage.setItem('idCategory', list);
   }
@@ -79,13 +83,11 @@ class Home extends React.Component {
       products,
       cartProducts,
       nameProductCard,
-      productCategory } = this.state;
+      productCategory,
+    } = this.state;
 
-    // const list1 = JSON.stringify(nameProductCard);
-    // localStorage.setItem('Produtos', list1);
-    // const list2 = JSON.stringify(cartProducts);
-    // localStorage.setItem('Carrinho', list2);
-
+    const quantt = localStorage.getItem('quant');
+    const quantLstorage = JSON.parse(quantt);
     return (
       <div className="main">
         <aside>
@@ -126,6 +128,7 @@ class Home extends React.Component {
             >
               buscar
             </button>
+            <p data-testid="shopping-cart-size">{quantLstorage}</p>
             <Link
               data-testid="shopping-cart-button"
               to={ { pathname: '/carrinho', state: { cartProducts, nameProductCard } } }
@@ -149,8 +152,15 @@ class Home extends React.Component {
                       picture={ thumbnail }
                       price={ price }
                       freteGratis={ shipping.free_shipping }
-                      addToCart={ () => this.addCart(id) }
                     />
+                    <button
+                      type="button"
+                      data-testid="product-add-to-cart"
+                      onClick={ () => this.addCart(id) }
+                    >
+                      addToCart
+
+                    </button>
                     <Link
                       data-testid="product-detail-link"
                       to={ `/product/${id}` }

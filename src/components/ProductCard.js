@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Button from './Button';
 import '../Styles/card-style.css';
 
 export default class ProductCard extends Component {
   render() {
-    const { title, picture, price, addToCart, freteGratis } = this.props;
+    const { title, picture, price, freteGratis } = this.props;
 
     return (
 
@@ -15,7 +14,7 @@ export default class ProductCard extends Component {
         <h2>{ price }</h2>
         {freteGratis
         && <p className="free" data-testid="free-shipping">Frete Grátis Disponível</p>}
-        <Button addToCart={ addToCart } dataId="product-add-to-cart" />
+
       </div>
     );
   }
@@ -25,6 +24,5 @@ ProductCard.propTypes = {
   title: PropTypes.string.isRequired,
   picture: PropTypes.string.isRequired,
   price: PropTypes.number.isRequired,
-  addToCart: PropTypes.func.isRequired,
   freteGratis: PropTypes.bool.isRequired,
 };
